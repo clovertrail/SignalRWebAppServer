@@ -41,7 +41,8 @@ namespace SignalRCoreAppServer
         {
             ConfigureLog();
             services.AddMvc();
-
+            var connectionCount = Configuration.GetValue<int>("ConnectionNumber");
+            Log.Information($"Connection count: {connectionCount}");
             if (useLocalSignalR)
             {
                 services.AddSignalR().AddMessagePackProtocol();
@@ -51,7 +52,7 @@ namespace SignalRCoreAppServer
                 services.AddSignalR().AddMessagePackProtocol().AddAzureSignalR(option =>
                 {
                     option.AccessTokenLifetime = TimeSpan.FromDays(1);
-                    option.ConnectionCount = Configuration.GetValue<int>("Azure:SignalR:ConnectionNumber");
+                    option.ConnectionCount = connectionCount;
                 });
             }
             services.Replace(ServiceDescriptor.Singleton(typeof(ILoggerFactory), typeof(CustomizeLoggerFactory)));
