@@ -33,7 +33,9 @@ namespace SignalRCoreAppServer
             var logFile = String.IsNullOrEmpty(extLogFile) ? "app.log" : extLogFile;
             Log.Logger = new LoggerConfiguration()
                     .MinimumLevel.Debug()
-                    .WriteTo.File(logFile, rollingInterval: RollingInterval.Day)
+                    .WriteTo.File(logFile,
+                                  shared : true, // allow other process to read the file during writing
+                                  rollingInterval: RollingInterval.Day)
                     .CreateLogger();
         }
 
