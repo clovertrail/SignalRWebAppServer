@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
+using NLog.Web;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace SignalRCoreAppServer
@@ -12,12 +14,36 @@ namespace SignalRCoreAppServer
 
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var logger = NLog.Web.NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
+            try
+            {
+                logger.Debug("init main");
+                CreateWebHostBuilder(args).Build().Run();
+            }
+            catch (Exception exception)
+            {
+                //NLog: catch setup errors
+                logger.Error(exception, "Stopped program because of exception");
+                throw;
+            }
+            finally
+            {
+                // Ensure to flush and stop internal timers/threads before application-exit (Avoid segmentation fault on Linux)
+                NLog.LogManager.Shutdown();
+            }
+        }
+
+        private static void ConfigureNLog(ILoggingBuilder logging)
+        {
+            logging.ClearProviders();
+            logging.SetMinimumLevel(LogLevel.Information);
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args).UseKestrel(KestrelConfig)
-            .UseStartup<Startup>();
+            .UseStartup<Startup>()
+            .ConfigureLogging(logging => ConfigureNLog(logging))
+            .UseNLog();
 
         public static readonly Action<WebHostBuilderContext, KestrelServerOptions> KestrelConfig =
             (context, options) =>

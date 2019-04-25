@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using NLog.Web;
 using Serilog;
 using System;
 
@@ -18,7 +19,7 @@ namespace Microsoft.Azure.SignalR.PerfTest.AppServer
             serviceCollection.AddLogging(config =>
             {
                 config.AddConsole();
-                config.AddSerilog();
+                //config.AddSerilog();
                 //config.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Debug);
                 //config.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Debug);
                 config.SetMinimumLevel(LogLevel.Information);

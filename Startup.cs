@@ -42,7 +42,7 @@ namespace SignalRCoreAppServer
 
         public void ConfigureServices(IServiceCollection services)
         {
-            ConfigureLog();
+            //ConfigureLog();
             services.AddMvc();
             var connectionCount = Configuration.GetValue<int>("ConnectionNumber");
             Log.Information($"Connection count: {connectionCount}");
@@ -58,7 +58,7 @@ namespace SignalRCoreAppServer
                     option.ConnectionCount = connectionCount;
                 });
             }
-            services.Replace(ServiceDescriptor.Singleton(typeof(ILoggerFactory), typeof(CustomizeLoggerFactory)));
+            //services.Replace(ServiceDescriptor.Singleton(typeof(ILoggerFactory), typeof(CustomizeLoggerFactory)));
             /*
             services.AddLogging(logging =>
             {
